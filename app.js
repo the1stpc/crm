@@ -1,15 +1,26 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+const passport = require('passport')
 
 const authRoutes = require('./routes/auth')
 const analyticsRoutes = require('./routes/analytics')
 const categoryRoutes = require('./routes/category')
 const orderRoutes = require('./routes/order')
 const positionRoutes = require('./routes/position')
+const keys = require('./config/keys')
 
 const app = express()
 
+mongoose.connect(keys.mongoURL, { useNewUrlParser: true })
+  .then(( )=> console.log('Db connected'))
+  .catch(err => console.log(error))
+
+app.use(passport.initialize())
+require('./middleware/passport')(passport)
+
 app.use(require('morgan')('dev'))
+app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(require('cors')())
